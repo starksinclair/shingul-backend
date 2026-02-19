@@ -8,8 +8,8 @@ COPY . .
 # ---- Development stage ----
 FROM base AS development
 EXPOSE 3333
-CMD ["sh", "-c", "node ace serve --watch"]
-# CMD ["sh", "-c", "node ace migration:run && node ace serve --watch"]
+# CMD ["sh", "-c", "node ace serve --watch"]
+CMD ["sh", "-c", "node ace migration:run && node ace serve --watch"]
 
 
 # # # ---- Build stage (production compile) ----
