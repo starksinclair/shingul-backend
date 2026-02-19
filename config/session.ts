@@ -21,12 +21,14 @@ const sessionConfig = defineConfig({
   /**
    * Configuration for session cookie and the
    * cookie store
+   * In production with cross-origin frontend, use sameSite: 'none' so the
+   * session cookie is sent with requests from the frontend domain.
    */
   cookie: {
     path: '/',
     httpOnly: true,
     secure: app.inProduction,
-    sameSite: 'lax',
+    sameSite: app.inProduction ? 'none' : 'lax',
   },
 
   /**
