@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 import GameSession from '../models/game_session.js'
-import GameResponse from '../models/game_response.js'
+// import GameResponse from '../models/game_response.js'
 
 export const createGameSessionValidator = vine.compile(
   vine.object({
@@ -63,20 +63,20 @@ export const startGameSessionValidator = vine.compile(
     .use(validateGame())
 )
 
-const EnsureUniqueResponse = vine.createRule(async (_value, _, field) => {
-  const { gameSessionId, questionId } = field.data as { gameSessionId: number; questionId: number }
-  const gameResponse = await GameResponse.query()
-    .where('game_session_id', gameSessionId)
-    .andWhere('question_id', questionId)
-    .first()
-  if (gameResponse) {
-    return field.report(
-      'You have already answered this question',
-      'You have already answered this question',
-      field
-    )
-  }
-})
+// const EnsureUniqueResponse = vine.createRule(async (_value, _, field) => {
+//   const { gameSessionId, questionId } = field.data as { gameSessionId: number; questionId: number }
+//   const gameResponse = await GameResponse.query()
+//     .where('game_session_id', gameSessionId)
+//     .andWhere('question_id', questionId)
+//     .first()
+//   if (gameResponse) {
+//     return field.report(
+//       'You have already answered this question',
+//       'You have already answered this question',
+//       field
+//     )
+//   }
+// })
 export const gameResponseValidator = vine.compile(
   vine.object({
     gameSessionId: vine.number().exists({ table: 'game_sessions', column: 'id' }),

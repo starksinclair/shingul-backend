@@ -5,8 +5,8 @@ import {
   joinGameSessionValidator,
   gameResponseValidator,
   kickoutGameSessionValidator,
-} from '../validators/game.js'
-import { serviceContainer } from '../services/service_container.js'
+} from '#validators/game'
+import { serviceContainer } from '#services/service_container'
 import { DateTime } from 'luxon'
 import GameResponse from '../models/game_response.js'
 import QuizQuestion from '../models/quiz_question.js'
@@ -268,15 +268,9 @@ export default class GamesController {
 
   async gameResponse({ request, response, auth }: HttpContext) {
     const payload = await request.validateUsing(gameResponseValidator)
-
-    // Use transaction to prevent race conditions
-    const result = await db.transaction(async (trx) => {
+    await db.transaction(async (trx) => {
       const gameSession = await GameSession.query({ client: trx })
         .where('id', payload.gameSessionId)
-        .preload('participants', (query) => {
-          query.where('status', 'active')
-          query.select('id', 'nickname', 'avatarColor', 'totalScore')
-        })
         .firstOrFail()
 
       const gameParticipant = await GameParticipant.query({ client: trx })
@@ -334,8 +328,18 @@ export default class GamesController {
       return { gameSession, gameParticipant }
     })
 
-    // await serviceContainer.gameService.broadcastGameSession(result.gameSession)
-    return response.ok(result.gameSession)
+    // Reload the game session with participants after the transaction commits
+    // so we broadcast and return the freshest state
+    const updatedGameSession = await GameSession.query()
+      .where('id', payload.gameSessionId)
+      .preload('participants', (query) => {
+        query.where('status', 'active')
+        query.select('id', 'nickname', 'avatarColor', 'totalScore', 'userId')
+      })
+      .firstOrFail()
+
+    await serviceContainer.gameService.broadcastGameSession(updatedGameSession)
+    return response.ok(updatedGameSession)
   }
   async getGameAndQuestion({ params, response, auth }: HttpContext) {
     const gameSession = await GameSession.findOrFail(params.id)

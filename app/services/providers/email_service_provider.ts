@@ -29,7 +29,7 @@ export class EmailServiceProvider implements EmailServiceInterface {
     console.log(`Link: ${magicLink}\n`)
 
     // In production, you should implement actual email sending here
-    // For now, we'll allow it to proceed but log a warning
+    // For now, we'll allow it to proceed but log a warningok
     if (app.inProduction) {
       console.warn('⚠️  Email service not fully implemented. Magic link:', magicLink)
     }
