@@ -1,13 +1,14 @@
 import { Worker } from 'bullmq'
 import { DateTime } from 'luxon'
 import GameSession from '../../app/models/game_session.js'
-import { serviceContainer } from '../../app/services/service_container.js'
+import { serviceContainer } from '#services/service_container'
 import db from '@adonisjs/lucid/services/db'
 import transmit from '@adonisjs/transmit/services/main'
 import { redis } from '../queues/redis.js'
 
 type AdvanceJobData = { gameSessionId: number; expectedIndex: number }
-
+redis.on('connect', () => console.log('[redis] connected'))
+redis.on('error', (err) => console.error('[redis] error', err))
 export const gameWorker = new Worker(
   'game-queue',
   async (job) => {
@@ -18,9 +19,6 @@ export const gameWorker = new Worker(
     if (!db || typeof db.transaction !== 'function') {
       throw new Error('Database service is not initialized')
     }
-    transmit.on('broadcast', ({ channel }) => {
-      console.log('[transmit-event] broadcast', channel)
-    })
 
     await db.transaction(async (trx) => {
       const game = await GameSession.query({ client: trx })
