@@ -21,10 +21,10 @@ RUN node ace build --ignore-ts-errors
 # ---- Production runtime ----
 FROM node:20-slim AS production
 WORKDIR /app
-ENV NODE_ENV=production HOST=0.0.0.0 PORT=3333
+ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
-COPY --from=build /app/build ./build
+COPY --from=build /app/build ./
 
 EXPOSE 3333
-CMD ["sh", "-c", "node build/ace.js migration:run && node build/bin/server.js"]
+CMD ["node", "bin/server.js"]
