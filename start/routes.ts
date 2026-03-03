@@ -11,6 +11,7 @@ import router from '@adonisjs/core/services/router'
 import { throttle } from './limiter.js'
 import { middleware } from './kernel.js'
 import transmit from '@adonisjs/transmit/services/main'
+import app from '@adonisjs/core/services/app'
 const FlashcardDecksController = () => import('../app/controllers/flashcard_decks_controller.js')
 const AuthController = () => import('#controllers/auth_controller')
 const DocumentsController = () => import('#controllers/documents_controller')
@@ -19,8 +20,10 @@ const QuizzesController = () => import('#controllers/quizzes_controller')
 const QuizAttemptsController = () => import('#controllers/quiz_attempts_controller')
 const GamesController = () => import('#controllers/games_controller')
 router.get('/', async () => {
+  const inProduction = app.inProduction
   return {
     hello: 'world',
+    environment: inProduction ? 'production' : 'development',
   }
 })
 
