@@ -31,35 +31,35 @@ services:
       redis:
         condition: service_healthy
 
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: development
-    container_name: shingul_worker
-    command: ["sh", "-c", "node ace run:game-worker"]
-    environment:
-      NODE_ENV: development
-      APP_KEY: ${APP_KEY}
-
-      DB_CONNECTION: pg
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: shingul
-      DB_PASSWORD: herbBoss
-      DB_DATABASE: shingul_dev
-
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      # REDIS_PASSWORD: ""
-    volumes:
-      - ./:/app
-      - /app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+#  worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      target: development
+#    container_name: shingul_worker
+#    command: ["sh", "-c", "node ace run:game-worker"]
+#    environment:
+#      NODE_ENV: development
+#      APP_KEY: ${APP_KEY}
+#
+#      DB_CONNECTION: pg
+#      DB_HOST: postgres
+#      DB_PORT: 5432
+#      DB_USER: shingul
+#      DB_PASSWORD: herbBoss
+#      DB_DATABASE: shingul_dev
+#
+#      REDIS_HOST: redis
+#      REDIS_PORT: 6379
+#      # REDIS_PASSWORD: ""
+#    volumes:
+#      - ./:/app
+#      - /app/node_modules
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      redis:
+#        condition: service_healthy
 
 
   postgres:
