@@ -22,7 +22,7 @@ const GamesController = () => import('#controllers/games_controller')
 router.get('/', async () => {
   const inProduction = app.inProduction
   return {
-    hello: 'world',
+    hello: 'world from AdonisJS',
     environment: inProduction ? 'production' : 'development',
   }
 })
